@@ -1,0 +1,55 @@
+<html>
+<head><title>Web Socket Test</title></head>
+<body>
+<script type="text/javascript">
+    var socket;
+    if (!window.WebSocket) {
+        window.WebSocket = window.MozWebSocket;
+    }
+    if (window.WebSocket) {
+        socket = new WebSocket("ws://127.0.0.1:8081/websocket");
+        socket.onmessage = function (event) {
+            var ta = document.getElementById('responseText');
+            ta.value = ta.value + '\n' + event.data
+        };
+        socket.onopen = function (event) {
+            var ta = document.getElementById('responseText');
+            ta.value = "Web Socket opened!";
+        };
+        socket.onclose = function (event) {
+            var ta = document.getElementById('responseText');
+            ta.value = ta.value + "Web Socket closed";
+        };
+    } else {
+        alert("Your browser does not support Web Socket.");
+    }
+
+    function send(message) {
+        if (!window.WebSocket) {
+            return;
+        }
+        if (socket.readyState === WebSocket.OPEN) {
+            socket.send(message);
+            console.log(message);
+        } else {
+            alert("The socket is not open.");
+        }
+    }
+
+    function createRoom(roomName) {
+        var message = JSON.stringify({roomName: roomName});
+        send(message);
+    }
+
+</script>
+<form onsubmit="return false;">
+    <input type="text" name="message" value="Hello, World!"/><input type="button" value="Send Web Socket Data"
+                                                                    onclick="send(this.form.message.value)"/>
+
+    <input type="text" name="create_room" value="room1"/><input type="button" value="create_room"
+                                                                onclick="createRoom(this.form.create_room.value)"/>
+    <h3>Output</h3>
+    <textarea id="responseText" style="width:500px;height:300px;"></textarea>
+</form>
+</body>
+</html>
