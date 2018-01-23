@@ -31,13 +31,7 @@ class ChannelRepository {
     fun createRoom(name: String): DefaultChannelGroup {
         logger.debug("creating room with name - {}", name)
         val defaultChannelGroup = DefaultChannelGroup(channelGroupEventExecutor)
-        defaultChannelGroup.newCloseFuture().addListener(object : ChannelGroupFutureListener {
-
-            override fun operationComplete(future: ChannelGroupFuture?) {
-                rooms.remove(name)
-            }
-
-        })
+//        removeOnChannelGroupClose(defaultChannelGroup, name)
         rooms.putIfAbsent(name, defaultChannelGroup)
         return defaultChannelGroup
     }
@@ -54,14 +48,18 @@ class ChannelRepository {
     @PostConstruct
     fun postConstruct() {
         val defaultChannelGroup = DefaultChannelGroup(channelGroupEventExecutor)
-        defaultChannelGroup.newCloseFuture().addListener(object : ChannelGroupFutureListener {
-
-            override fun operationComplete(future: ChannelGroupFuture?) {
-                rooms.remove(DEFAULT_ROOM_NAME)
-            }
-
-        })
+//        removeOnChannelGroupClose(defaultChannelGroup, DEFAULT_ROOM_NAME)
         rooms[DEFAULT_ROOM_NAME] = defaultChannelGroup
+    }
+    //endregion
+
+    //region Utility methods
+    private fun removeOnChannelGroupClose(defaultChannelGroup: DefaultChannelGroup, name: String) {
+        defaultChannelGroup.newCloseFuture().addListener(object : ChannelGroupFutureListener {
+            override fun operationComplete(future: ChannelGroupFuture?) {
+                rooms.remove(name)
+            }
+        })
     }
     //endregion
 

@@ -29,7 +29,7 @@
             return;
         }
         if (socket.readyState === WebSocket.OPEN) {
-            socket.send(JSON.stringify({data: data}));
+            socket.send(JSON.stringify(data));
             console.log(data);
         } else {
             alert("The socket is not open.");
@@ -37,14 +37,13 @@
     }
 
     function createRoom(roomName) {
-        var message = JSON.stringify({roomName: roomName});
-        send(message);
+        send({roomName: roomName});
     }
 
 </script>
 <form onsubmit="return false;">
     <input type="text" name="message" value="Hello, World!"/><input type="button" value="Send Web Socket Data"
-                                                                    onclick="send(this.form.message.value)"/>
+                                                                    onclick="send({message: this.form.message.value})"/>
 
     <input type="text" name="create_room" value="room1"/><input type="button" value="create_room"
                                                                 onclick="createRoom(this.form.create_room.value)"/>
