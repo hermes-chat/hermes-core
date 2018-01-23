@@ -19,6 +19,7 @@ import org.springframework.context.annotation.PropertySource
 @PropertySource(value = ["classpath:netty/local/netty-server.properties"])
 class HermesWebsocketApplication {
 
+    //region Configuration profiles
     @Configuration
     @Profile("production")
     @PropertySource("classpath:netty/production/netty-server.properties")
@@ -28,7 +29,9 @@ class HermesWebsocketApplication {
     @Profile("local")
     @PropertySource("classpath:netty/local/netty-server.properties")
     internal class Local
+    //endregion
 
+    //region Companion object
     companion object {
 
         private val logger = LoggerFactory.getLogger(HermesWebsocketApplication::class.java)
@@ -40,4 +43,5 @@ class HermesWebsocketApplication {
         }
 
     }
+    //endregion
 }
