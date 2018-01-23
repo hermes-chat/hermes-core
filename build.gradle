@@ -1,0 +1,265 @@
+buildscript {
+    ext {
+        kotlinVersion = '1.2.20'
+        springBootVersion = '1.5.9.RELEASE'
+        springDependencyManagementVersion = '1.0.4.RELEASE'
+        platformGroup = 'org.biacode.hermes.core'
+        platformVersion = '0.0.1-SNAPSHOT'
+
+        commonsIoVersion = '2.6'
+        commonsLangVersion = '3.7'
+        commonsValidatorVersion = '1.6'
+        commonsCollectionsVersion = '4.1'
+        springBomVersion = 'Brussels-SR6'
+        nettyVersion = '4.1.20.Final'
+
+        easymockVersion = '3.5.1'
+        assetjVersion = '3.9.0'
+    }
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("io.spring.gradle:dependency-management-plugin:${springDependencyManagementVersion}")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+        classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
+    }
+}
+
+allprojects {
+
+    apply plugin: 'idea'
+    apply plugin: 'kotlin'
+    apply plugin: 'eclipse'
+    apply plugin: 'kotlin-spring'
+    apply plugin: "io.spring.dependency-management"
+
+    group = platformGroup
+    version = platformVersion
+    sourceCompatibility = 1.8
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+    }
+
+    compileKotlin {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+    compileTestKotlin {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+
+    dependencies {
+        // Kotlin
+        compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
+        compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
+
+        // Apache commons
+        compile("commons-io:commons-io:${commonsIoVersion}")
+        compile("org.apache.commons:commons-lang3:${commonsLangVersion}")
+        compile("commons-validator:commons-validator:${commonsValidatorVersion}")
+        compile("org.apache.commons:commons-collections4:${commonsCollectionsVersion}")
+
+        // Others
+        compile "org.slf4j:slf4j-api"
+        runtime "ch.qos.logback:logback-classic"
+
+        // Test
+        testCompile project(':toolkit-test')
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom "io.spring.platform:platform-bom:${springBomVersion}"
+        }
+    }
+}
+
+//region websocket
+project('api:websocket:websocket-resource') {
+    group = "${platformGroup}.websocket"
+    version = platformVersion
+
+    apply plugin: 'org.springframework.boot'
+
+    bootRepackage {
+        mainClass = 'org.biacode.hermes.core.api.websocket.resource.CentricWebsocketApplication'
+        executable = true
+    }
+
+    dependencies {
+        compile project(':api:websocket:websocket-facade')
+        compile("io.netty:netty-all:${nettyVersion}")
+        compile("com.fasterxml.jackson.core:jackson-databind")
+        compile("com.fasterxml.jackson.module:jackson-module-kotlin")
+    }
+}
+
+project('api:websocket:websocket-facade') {
+    group = "${platformGroup}.websocket"
+    version = platformVersion
+
+    dependencies {
+        compile project(':api:websocket:websocket-model')
+        compile project(':service:service-core')
+        runtime project(':service:service-impl')
+    }
+}
+
+project('api:websocket:websocket-model') {
+    group = "${platformGroup}.websocket"
+    version = platformVersion
+
+    dependencies {
+        compile "com.fasterxml.jackson.core:jackson-annotations"
+    }
+}
+
+project('api:websocket:websocket-integrationtest') {
+    group = "${platformGroup}.websocket"
+    version = platformVersion
+
+    dependencies {
+        compile project(':api:websocket:websocket-resource')
+    }
+}
+//endregion
+
+//region rest
+project('api:rest:rest-resource') {
+    group = "${platformGroup}.rest"
+    version = platformVersion
+
+    apply plugin: 'org.springframework.boot'
+
+    bootRepackage {
+        mainClass = 'org.biacode.hermes.core.api.rest.resource.CentricRestApplication'
+        executable = true
+    }
+
+    dependencies {
+        compile project(':api:rest:rest-facade')
+        runtime('org.springframework.boot:spring-boot-devtools')
+        compile('org.springframework.boot:spring-boot-starter-web')
+        compile('org.springframework.boot:spring-boot-starter-jersey')
+        compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+    }
+}
+
+project('api:rest:rest-facade') {
+    group = "${platformGroup}.rest"
+    version = platformVersion
+
+    dependencies {
+        compile project(':api:rest:rest-model')
+        compile project(':service:service-core')
+        runtime project(':service:service-impl')
+    }
+}
+
+project('api:rest:rest-model') {
+    group = "${platformGroup}.rest"
+    version = platformVersion
+
+    dependencies {
+        compile "com.fasterxml.jackson.core:jackson-annotations"
+    }
+}
+
+project('api:rest:rest-integrationtest') {
+    group = "${platformGroup}.rest"
+    version = platformVersion
+
+    dependencies {
+        compile project(':api:rest:rest-resource')
+    }
+}
+//endregion
+
+//region service
+project('service:service-core') {
+    group = "${platformGroup}.service"
+    version = platformVersion
+
+    dependencies {
+        compile project(':domain')
+    }
+}
+
+project('service:service-impl') {
+    group = "${platformGroup}.service"
+    version = platformVersion
+
+    dependencies {
+        compile project(':service:service-core')
+        compile project(':persistence:persistence-core')
+        runtime project(':persistence:persistence-impl')
+        compile "org.springframework:spring-core"
+    }
+}
+
+project('service:service-integrationtest') {
+    group = "${platformGroup}.service"
+    version = platformVersion
+
+    dependencies {
+        compile project(':service:service-core')
+        runtime project(':service:service-impl')
+        compile "org.springframework:spring-core"
+    }
+}
+//endregion
+
+//region persistence
+project('persistence:persistence-core') {
+    group = "${platformGroup}.persistence"
+    version = platformVersion
+
+    dependencies {
+        compile project(':domain')
+    }
+}
+
+project('persistence:persistence-impl') {
+    group = "${platformGroup}.persistence"
+    version = platformVersion
+
+    dependencies {
+        compile project(':persistence:persistence-core')
+        runtime('com.h2database:h2')
+        runtime('org.postgresql:postgresql')
+    }
+}
+//endregion
+
+//region domain
+project('domain') {
+    group = "${platformGroup}.domain"
+    version = platformVersion
+
+    dependencies {
+        compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    }
+}
+//endregion
+
+//region toolkit
+project('toolkit-test') {
+    group = "${platformGroup}.toolkit"
+    version = platformVersion
+
+    dependencies {
+        compile project(':service:service-core')
+        runtime project(':service:service-impl')
+        compile('org.springframework.restdocs:spring-restdocs-mockmvc')
+        compile('org.springframework.boot:spring-boot-starter-test')
+        compile("org.easymock:easymock:${easymockVersion}")
+        compile("org.assertj:assertj-core:${assetjVersion}")
+    }
+}
+//endregion
