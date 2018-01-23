@@ -24,13 +24,13 @@
         alert("Your browser does not support Web Socket.");
     }
 
-    function send(message) {
+    function send(data) {
         if (!window.WebSocket) {
             return;
         }
         if (socket.readyState === WebSocket.OPEN) {
-            socket.send(message);
-            console.log(message);
+            socket.send(JSON.stringify({data: data}));
+            console.log(data);
         } else {
             alert("The socket is not open.");
         }

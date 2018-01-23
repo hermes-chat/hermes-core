@@ -7,8 +7,8 @@ import io.netty.handler.codec.http.HttpServerCodec
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler
 import io.netty.handler.ssl.SslContext
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Bean
 import org.springframework.stereotype.Component
 
 /**
@@ -19,34 +19,35 @@ import org.springframework.stereotype.Component
 @Component
 class WebSocketServerInitializer : ChannelInitializer<SocketChannel>() {
 
-    @Autowired
-    private lateinit var webSocketIndexPageHandler: WebSocketIndexPageHandler
-
+    //region Dependencies
     @Autowired
     private lateinit var webSocketFrameHandler: WebSocketFrameHandler
 
     @Autowired
     private var sslCtx: SslContext? = null
+    //endregion
 
-    @Bean
-    fun webSocketIndexPageHandler(): WebSocketIndexPageHandler {
-        return WebSocketIndexPageHandler(WEBSOCKET_PATH)
-    }
-
+    //region Public methods
     public override fun initChannel(ch: SocketChannel) {
+        logger.debug("Creating channel pipeline")
         val pipeline = ch.pipeline()
         if (sslCtx != null) {
+            logger.debug("Adding SSL handler to pipeline")
             pipeline.addLast(sslCtx!!.newHandler(ch.alloc()))
         }
-        pipeline.addLast("httpServerCodec", HttpServerCodec())
-        pipeline.addLast("httpObjectAggregator", HttpObjectAggregator(65536))
-        pipeline.addLast("webSocketServerCompressionHandler", WebSocketServerCompressionHandler())
-        pipeline.addLast("webSocketServerProtocolHandler", WebSocketServerProtocolHandler(WEBSOCKET_PATH, null, true))
-        pipeline.addLast("webSocketIndexPageHandler", webSocketIndexPageHandler)
-        pipeline.addLast("webSocketFrameHandler", webSocketFrameHandler)
+        pipeline
+                .addLast("httpServerCodec", HttpServerCodec())
+                .addLast("httpObjectAggregator", HttpObjectAggregator(65536))
+                .addLast("webSocketServerCompressionHandler", WebSocketServerCompressionHandler())
+                .addLast("webSocketServerProtocolHandler", WebSocketServerProtocolHandler(WEBSOCKET_PATH, null, true))
+                .addLast("webSocketFrameHandler", webSocketFrameHandler)
+        logger.debug("Channel pipeline successfully created")
     }
+    //endregion
 
     companion object {
         private const val WEBSOCKET_PATH = "/websocket"
+
+        private val logger = LoggerFactory.getLogger(WebSocketServerInitializer::class.java)
     }
 }

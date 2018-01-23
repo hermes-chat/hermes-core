@@ -24,68 +24,65 @@ import org.springframework.stereotype.Component
 @ChannelHandler.Sharable
 class WebSocketFrameHandler : SimpleChannelInboundHandler<WebSocketFrame>() {
 
+    //region Dependencies
     @Autowired
     private lateinit var channelRepository: ChannelRepository
 
     @Autowired
     private lateinit var jacksonObjectMapper: ObjectMapper
+    //endregion
 
-    override fun channelActive(ctx: ChannelHandlerContext) {
-        super.channelActive(ctx)
-    }
-
-    override fun channelInactive(ctx: ChannelHandlerContext) {
-        super.channelInactive(ctx)
-    }
-
+    //region Public methods
     override fun channelRead0(ctx: ChannelHandlerContext, frame: WebSocketFrame) {
-        // remove webSocketIndexPageHandler for optimizing channel pipeline
-        val webSocketIndexPageHandler = ctx.channel().pipeline().get("webSocketIndexPageHandler")
-        if (webSocketIndexPageHandler != null) {
-            ctx.channel().pipeline().remove("webSocketIndexPageHandler")
-        }
-        // ping and pong frames already handled
         when (frame) {
             is TextWebSocketFrame -> {
-                val request = frame.retain().text()
+                val request = frame.text()
+                logger.debug("Channel - {} received frame - {}", ctx.channel(), request)
                 val jsonMap: Map<String, String> = jacksonObjectMapper.readValue(request, object : TypeReference<Map<Any, Any>>() {})
                 if (jsonMap.containsKey("roomName")) {
                     jsonMap["roomName"]?.let {
                         channelRepository.createRoom(it).add(ctx.channel())
                     }
                 }
-                logger.info("{} received {}", ctx.channel(), request)
                 ctx.channel().writeAndFlush(TextWebSocketFrame(request))
             }
             is CloseWebSocketFrame -> {
-                println("WebSocket Client received closing")
+                logger.debug("Channel - {} WebSocket Client received closing frame", ctx.channel())
                 ctx.channel().close()
             }
-            else -> {
-                val message = "unsupported frame type: " + frame.javaClass.name
-                throw UnsupportedOperationException(message)
-            }
+            else -> throw UnsupportedOperationException("Unsupported frame type: " + frame.javaClass.name)
         }
     }
 
-    override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
-        logger.error(cause.message, cause)
+    override fun channelReadComplete(ctx: ChannelHandlerContext) {
+        logger.debug("Channel - {} read completed", ctx.channel())
+        ctx.channel().flush()
     }
 
     override fun userEventTriggered(ctx: ChannelHandlerContext, evt: Any) {
-        super.userEventTriggered(ctx, evt)
+        logger.debug("Channel - {} user event - {} is triggered", ctx.channel(), evt)
         if (evt is WebSocketServerProtocolHandler.HandshakeComplete) {
+            logger.info("Channel - {} handshake completed", ctx.channel())
             channelRepository.addChannelToRoom(DEFAULT_ROOM_NAME, ctx.channel())
-            logger.info("handshake completed for channel - {}", ctx.channel())
-            setOf(
-                    "webSocketIndexPageHandler"
-            ).forEach {
-                ctx.channel().pipeline().remove(it)
-            }
         }
     }
 
+    override fun channelActive(ctx: ChannelHandlerContext) {
+        logger.debug("Channel - {} is active", ctx.channel())
+    }
+
+    override fun channelInactive(ctx: ChannelHandlerContext) {
+        logger.debug("Channel - {} is inactive", ctx.channel())
+    }
+
+    override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
+        logger.error("Channel - {} cause message - {} cause - {}", ctx.channel(), cause.message, cause)
+    }
+    //endregion
+
+    //region Companion object
     companion object {
         private val logger = LoggerFactory.getLogger(WebSocketFrameHandler::class.java)
     }
+    //endregion
 }

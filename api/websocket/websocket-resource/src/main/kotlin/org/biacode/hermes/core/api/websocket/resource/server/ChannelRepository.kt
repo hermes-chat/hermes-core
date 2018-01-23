@@ -23,8 +23,11 @@ import javax.annotation.PostConstruct
 @Component
 class ChannelRepository {
 
+    //region Properties
     private var rooms: ConcurrentMap<String, ChannelGroup> = PlatformDependent.newConcurrentHashMap<String, ChannelGroup>()
+    //endregion
 
+    //region Public methods
     fun createRoom(name: String): DefaultChannelGroup {
         logger.debug("creating room with name - {}", name)
         val defaultChannelGroup = DefaultChannelGroup(channelGroupEventExecutor)
@@ -48,13 +51,8 @@ class ChannelRepository {
         return Optional.ofNullable(rooms[roomName])
     }
 
-    init {
-        println("in class")
-    }
-
     @PostConstruct
     fun postConstruct() {
-        println("in post construct")
         val defaultChannelGroup = DefaultChannelGroup(channelGroupEventExecutor)
         defaultChannelGroup.newCloseFuture().addListener(object : ChannelGroupFutureListener {
 
@@ -65,16 +63,15 @@ class ChannelRepository {
         })
         rooms[DEFAULT_ROOM_NAME] = defaultChannelGroup
     }
+    //endregion
 
+    //region Companion object
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(ChannelRepository::class.java)
 
         const val DEFAULT_ROOM_NAME = "guest"
 
         private val channelGroupEventExecutor: EventExecutor = DefaultEventExecutor()
-
-        init {
-            println("in companion")
-        }
     }
+    //endregion
 }

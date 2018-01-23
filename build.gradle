@@ -11,6 +11,7 @@ buildscript {
         commonsValidatorVersion = '1.6'
         commonsCollectionsVersion = '4.1'
         springBomVersion = 'Brussels-SR6'
+        jacksonVersion = '2.9.3'
         nettyVersion = '4.1.20.Final'
 
         easymockVersion = '3.5.1'
@@ -57,7 +58,7 @@ allprojects {
     dependencies {
         // Kotlin
         compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
-        compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
+        compile "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
 
         // Apache commons
         compile("commons-io:commons-io:${commonsIoVersion}")
@@ -88,7 +89,7 @@ project('api:websocket:websocket-resource') {
     apply plugin: 'org.springframework.boot'
 
     bootRepackage {
-        mainClass = 'org.biacode.hermes.core.api.websocket.resource.CentricWebsocketApplication'
+        mainClass = 'org.biacode.hermes.core.api.websocket.resource.HermesWebsocketApplication'
         executable = true
     }
 
