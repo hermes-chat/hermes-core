@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        kotlinVersion = '1.2.20'
+        kotlinVersion = '1.2.21'
         springBootVersion = '1.5.9.RELEASE'
         springDependencyManagementVersion = '1.0.4.RELEASE'
         platformGroup = 'org.biacode.hermes.core'
@@ -11,7 +11,6 @@ buildscript {
         commonsValidatorVersion = '1.6'
         commonsCollectionsVersion = '4.1'
         springBomVersion = 'Brussels-SR6'
-        jacksonVersion = '2.9.3'
         nettyVersion = '4.1.20.Final'
 
         easymockVersion = '3.5.1'
