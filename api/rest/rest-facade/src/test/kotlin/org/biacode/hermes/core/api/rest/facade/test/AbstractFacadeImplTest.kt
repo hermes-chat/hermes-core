@@ -1,5 +1,6 @@
 package org.biacode.hermes.core.api.rest.facade.test
 
+import org.biacode.hermes.core.api.rest.facade.test.helper.FacadeImplTestHelperTestHelper
 import org.easymock.EasyMockRunner
 import org.easymock.EasyMockSupport
 import org.junit.runner.RunWith
