@@ -138,7 +138,7 @@ project('api:rest:rest-resource') {
     apply plugin: 'org.springframework.boot'
 
     bootRepackage {
-        mainClass = 'org.biacode.hermes.core.api.rest.resource.CentricRestApplication'
+        mainClass = 'org.biacode.hermes.core.api.rest.resource.HermesRestApplication'
         executable = true
     }
 
