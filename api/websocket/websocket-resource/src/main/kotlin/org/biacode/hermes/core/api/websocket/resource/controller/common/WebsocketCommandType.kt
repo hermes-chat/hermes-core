@@ -11,7 +11,10 @@ enum class WebsocketCommandType(private val command: String) {
 
     //region Properties
     @JsonProperty("room/create")
-    ROOM_CREATE_ROOM("room/create");
+    ROOM_CREATE_ROOM("room/create"),
+
+    @JsonProperty("account/create")
+    ACCOUNT_CREATE_ACCOUNT("account/create");
     //endregion
 
     //region Companion objects

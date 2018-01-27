@@ -44,13 +44,23 @@
         send({command: "room/create", roomName: roomName});
     }
 
+    function createAccount(email) {
+        send({command: "account/create", email: email});
+    }
+
 </script>
 <form onsubmit="return false;">
     <input type="text" name="message" value="Hello, World!"/><input type="button" value="Send Web Socket Data"
                                                                     onclick="sendMessageToRoom(this.form.message.value)"/>
-
+    <br>
     <input type="text" name="create_room" value="room1"/><input type="button" value="create_room"
                                                                 onclick="createRoom(this.form.create_room.value)"/>
+    <br>
+    <br>
+    <br>
+    <input type="text" name="create_account" value="account1@gmail.com"/><input type="button" value="create_account"
+                                                                                onclick="createAccount(this.form.create_account.value)"/>
+    <br>
     <h3>Output</h3>
     <textarea id="responseText" style="width:500px;height:300px;"></textarea>
 </form>
