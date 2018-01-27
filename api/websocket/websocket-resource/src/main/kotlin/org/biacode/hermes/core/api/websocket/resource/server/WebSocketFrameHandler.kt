@@ -7,6 +7,8 @@ import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler
+import org.biacode.hermes.core.api.websocket.resource.configuration.WebsocketRouteWrapper
+import org.biacode.hermes.core.api.websocket.resource.controller.common.WebsocketCommandType
 import org.biacode.hermes.core.api.websocket.resource.server.ChannelRepository.Companion.DEFAULT_ROOM_NAME
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,17 +30,20 @@ class WebSocketFrameHandler : SimpleChannelInboundHandler<TextWebSocketFrame>() 
 
     @Autowired
     private lateinit var jacksonObjectMapper: ObjectMapper
+
+    @Autowired
+    private lateinit var websocketRouteWrapper: WebsocketRouteWrapper
     //endregion
 
     //region Public methods
     override fun channelRead0(ctx: ChannelHandlerContext, frame: TextWebSocketFrame) {
         val request = frame.text()
         logger.debug("Channel - {} received frame - {}", ctx.channel(), request)
+        // TODO: I believe it is possible to optimize deserialization of request here.
         val jsonMap: Map<String, String> = jacksonObjectMapper.readValue(request, object : TypeReference<Map<Any, Any>>() {})
-        if (jsonMap.containsKey("roomName")) {
-            jsonMap["roomName"]?.let {
-                channelRepository.createRoom(it).add(ctx.channel())
-            }
+        jsonMap["command"]?.let {
+            val route = websocketRouteWrapper.getRoute(WebsocketCommandType.getValueFor(it))
+            route.method.invoke(route.beanObject, jacksonObjectMapper.readValue(request, route.requestClass))
         }
         ctx.channel().writeAndFlush(TextWebSocketFrame(request))
     }

@@ -31,25 +31,21 @@ class WebsocketServerConfiguration {
 
     @Autowired
     private lateinit var workerGroup: NioEventLoopGroup
-
-    @Autowired
-    private lateinit var serverChannel: Channel
     //endregion
 
     //region Beans
     @Bean(name = ["serverChannel"], autowire = Autowire.BY_NAME)
     fun serverChannel(): Channel {
         logger.debug("Starting server on port - {}", tcpPort)
-        serverChannel = serverBootstrap.bind(tcpPort).sync().channel()
-        return serverChannel.closeFuture().sync().channel()
+        return serverBootstrap.bind(tcpPort).sync().channel().closeFuture().channel()
     }
 
     @PreDestroy
     fun stop() {
         logger.debug("Closing server channel")
-        serverChannel.close()
+        serverChannel().close()
         logger.debug("Closing server channel's parent")
-        serverChannel.parent().close()
+        serverChannel().parent().close()
         logger.debug("Shutting down boss group")
         bossGroup.shutdownGracefully()
         logger.debug("Shutting down worker group")

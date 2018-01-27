@@ -96,7 +96,7 @@ project('api:websocket:websocket-resource') {
         compile project(':api:websocket:websocket-facade')
         compile("io.netty:netty-all:${nettyVersion}")
         compile("com.fasterxml.jackson.core:jackson-databind")
-        compile("com.fasterxml.jackson.module:jackson-module-kotlin")
+//        compile("com.fasterxml.jackson.module:jackson-module-kotlin")
     }
 }
 

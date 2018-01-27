@@ -10,15 +10,21 @@ import org.springframework.context.annotation.Configuration
  * Created by Arthur Asatryan.
  * Date: 1/27/18
  * Time: 9:33 PM
+ *
+ * This BPP will fix bean definition class name nullability issue for classes
+ * which are containing method annotated with WebsocketCommand.
  */
 @Configuration
-class WebsocketCommandAnnotationBeanDefinitionClassNameResolverBeanPostProcessor : BeanPostProcessor {
+class WebsocketCommandAnnotationBeanDefinitionClassNameAppenderBeanPostProcessor : BeanPostProcessor {
 
+    //region Dependencies
     @Autowired
     private lateinit var configurableListableBeanFactory: ConfigurableListableBeanFactory
+    //endregion
 
+    //region Public methods
     override fun postProcessBeforeInitialization(bean: Any, beanName: String): Any {
-        if (bean.javaClass.methods.any { it.isAnnotationPresent(WebsocketCommand::class.java) }) {
+        if (classContainsMethodWithAnnotation(bean, WebsocketCommand::class.java)) {
             val beanDefinition = configurableListableBeanFactory.getBeanDefinition(beanName)
             if (beanDefinition.beanClassName == null) {
                 beanDefinition.beanClassName = bean.javaClass.canonicalName
@@ -30,4 +36,10 @@ class WebsocketCommandAnnotationBeanDefinitionClassNameResolverBeanPostProcessor
     override fun postProcessAfterInitialization(bean: Any, beanName: String): Any {
         return bean
     }
+    //endregion
+
+    //region Utility methods
+    private fun classContainsMethodWithAnnotation(bean: Any, clazz: Class<out Annotation>) = bean.javaClass.methods
+            .any { it.isAnnotationPresent(clazz) }
+    //endregion
 }

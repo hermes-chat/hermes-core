@@ -1,7 +1,6 @@
 package org.biacode.hermes.core.api.websocket.resource.configuration
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -18,7 +17,7 @@ class ObjectMapperConfiguration {
     @Bean
     fun objectMapper(): ObjectMapper {
         logger.debug("Creating object mapper.")
-        return ObjectMapper().registerModule(KotlinModule())
+        return ObjectMapper()
     }
     //endregion
 

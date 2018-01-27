@@ -36,14 +36,18 @@
         }
     }
 
+    function sendMessageToRoom(message) {
+        send({command: "room/send", message: message});
+    }
+
     function createRoom(roomName) {
-        send({roomName: roomName});
+        send({command: "room/create", roomName: roomName});
     }
 
 </script>
 <form onsubmit="return false;">
     <input type="text" name="message" value="Hello, World!"/><input type="button" value="Send Web Socket Data"
-                                                                    onclick="send({message: this.form.message.value})"/>
+                                                                    onclick="sendMessageToRoom(this.form.message.value)"/>
 
     <input type="text" name="create_room" value="room1"/><input type="button" value="create_room"
                                                                 onclick="createRoom(this.form.create_room.value)"/>

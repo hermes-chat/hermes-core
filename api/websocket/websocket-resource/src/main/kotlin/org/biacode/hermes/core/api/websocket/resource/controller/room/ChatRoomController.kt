@@ -5,20 +5,14 @@ import org.springframework.stereotype.Component
 
 /**
  * Created by Arthur Asatryan.
- * Date: 1/25/18
- * Time: 3:48 PM
+ * Date: 1/28/18
+ * Time: 12:08 AM
  */
 @Component
 class ChatRoomController {
 
-    //region Dependencies
-    //endregion
-
-    //region Public methods
-    @WebsocketCommand("room/addRoom")
-    fun createRoom(name: String) {
-        println("hahahha")
+    @WebsocketCommand("room/create")
+    fun create(request: CreateRoomRequest) {
+        println(request)
     }
-    //endregion
-
 }
