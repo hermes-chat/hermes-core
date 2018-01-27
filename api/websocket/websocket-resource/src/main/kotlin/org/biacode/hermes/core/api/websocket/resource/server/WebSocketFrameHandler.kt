@@ -1,6 +1,5 @@
 package org.biacode.hermes.core.api.websocket.resource.server
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.netty.channel.ChannelHandler
 import io.netty.channel.ChannelHandlerContext
@@ -40,9 +39,9 @@ class WebSocketFrameHandler : SimpleChannelInboundHandler<TextWebSocketFrame>() 
         val request = frame.text()
         logger.debug("Channel - {} received frame - {}", ctx.channel(), request)
         // TODO: I believe it is possible to optimize deserialization of request here.
-        val jsonMap: Map<String, String> = jacksonObjectMapper.readValue(request, object : TypeReference<Map<Any, Any>>() {})
+        val jsonMap = jacksonObjectMapper.readTree(request)
         jsonMap["command"]?.let {
-            val route = websocketRouteWrapper.getRoute(WebsocketCommandType.getValueFor(it))
+            val route = websocketRouteWrapper.getRoute(WebsocketCommandType.getValueFor(it.asText()))
             route.method.invoke(route.beanObject, jacksonObjectMapper.readValue(request, route.requestClass))
         }
         ctx.channel().writeAndFlush(TextWebSocketFrame(request))
