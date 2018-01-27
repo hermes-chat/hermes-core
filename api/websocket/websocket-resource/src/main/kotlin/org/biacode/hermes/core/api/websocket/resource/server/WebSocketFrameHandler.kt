@@ -5,9 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.netty.channel.ChannelHandler
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
-import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame
-import io.netty.handler.codec.http.websocketx.WebSocketFrame
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler
 import org.biacode.hermes.core.api.websocket.resource.server.ChannelRepository.Companion.DEFAULT_ROOM_NAME
 import org.slf4j.LoggerFactory
@@ -22,7 +20,7 @@ import org.springframework.stereotype.Component
  */
 @Component
 @ChannelHandler.Sharable
-class WebSocketFrameHandler : SimpleChannelInboundHandler<WebSocketFrame>() {
+class WebSocketFrameHandler : SimpleChannelInboundHandler<TextWebSocketFrame>() {
 
     //region Dependencies
     @Autowired
@@ -33,25 +31,16 @@ class WebSocketFrameHandler : SimpleChannelInboundHandler<WebSocketFrame>() {
     //endregion
 
     //region Public methods
-    override fun channelRead0(ctx: ChannelHandlerContext, frame: WebSocketFrame) {
-        when (frame) {
-            is TextWebSocketFrame -> {
-                val request = frame.text()
-                logger.debug("Channel - {} received frame - {}", ctx.channel(), request)
-                val jsonMap: Map<String, String> = jacksonObjectMapper.readValue(request, object : TypeReference<Map<Any, Any>>() {})
-                if (jsonMap.containsKey("roomName")) {
-                    jsonMap["roomName"]?.let {
-                        channelRepository.createRoom(it).add(ctx.channel())
-                    }
-                }
-                ctx.channel().writeAndFlush(TextWebSocketFrame(request))
+    override fun channelRead0(ctx: ChannelHandlerContext, frame: TextWebSocketFrame) {
+        val request = frame.text()
+        logger.debug("Channel - {} received frame - {}", ctx.channel(), request)
+        val jsonMap: Map<String, String> = jacksonObjectMapper.readValue(request, object : TypeReference<Map<Any, Any>>() {})
+        if (jsonMap.containsKey("roomName")) {
+            jsonMap["roomName"]?.let {
+                channelRepository.createRoom(it).add(ctx.channel())
             }
-            is CloseWebSocketFrame -> {
-                logger.debug("Channel - {} WebSocket Client received closing frame", ctx.channel())
-                ctx.channel().close()
-            }
-            else -> throw UnsupportedOperationException("Unsupported frame type: " + frame.javaClass.name)
         }
+        ctx.channel().writeAndFlush(TextWebSocketFrame(request))
     }
 
     override fun channelReadComplete(ctx: ChannelHandlerContext) {
