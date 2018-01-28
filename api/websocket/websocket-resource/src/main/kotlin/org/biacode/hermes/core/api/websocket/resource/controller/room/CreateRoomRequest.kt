@@ -1,7 +1,7 @@
 package org.biacode.hermes.core.api.websocket.resource.controller.room
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.biacode.hermes.core.api.websocket.resource.controller.common.CommandAwareWebsocketRequest
+import org.biacode.hermes.spring.netty.model.CommandAwareNettyControllerRequest
 
 /**
  * Created by Arthur Asatryan.
@@ -11,4 +11,4 @@ import org.biacode.hermes.core.api.websocket.resource.controller.common.CommandA
 class CreateRoomRequest(
         @JsonProperty("roomName")
         val roomName: String
-) : CommandAwareWebsocketRequest()
+) : CommandAwareNettyControllerRequest()

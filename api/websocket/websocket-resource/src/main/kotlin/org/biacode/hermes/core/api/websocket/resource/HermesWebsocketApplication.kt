@@ -2,11 +2,9 @@ package org.biacode.hermes.core.api.websocket.resource
 
 import org.slf4j.LoggerFactory
 import org.springframework.boot.SpringApplication
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.ImportResource
-import org.springframework.context.annotation.Profile
-import org.springframework.context.annotation.PropertySource
 
 
 /**
@@ -14,22 +12,10 @@ import org.springframework.context.annotation.PropertySource
  * Date: 1/13/18
  * Time: 4:54 PM
  */
+@EnableAutoConfiguration
 @SpringBootApplication
 @ImportResource("classpath:bootContext.xml")
-@PropertySource(value = ["classpath:netty/local/netty-server.properties"])
 class HermesWebsocketApplication {
-
-    //region Configuration profiles
-    @Configuration
-    @Profile("production")
-    @PropertySource("classpath:netty/production/netty-server.properties")
-    internal class Production
-
-    @Configuration
-    @Profile("local")
-    @PropertySource("classpath:netty/local/netty-server.properties")
-    internal class Local
-    //endregion
 
     //region Companion object
     companion object {

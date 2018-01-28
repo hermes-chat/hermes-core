@@ -2,8 +2,6 @@ package org.biacode.hermes.core.api.websocket.resource.server
 
 import io.netty.channel.Channel
 import io.netty.channel.group.ChannelGroup
-import io.netty.channel.group.ChannelGroupFuture
-import io.netty.channel.group.ChannelGroupFutureListener
 import io.netty.channel.group.DefaultChannelGroup
 import io.netty.util.concurrent.DefaultEventExecutor
 import io.netty.util.concurrent.EventExecutor
@@ -55,11 +53,7 @@ class ChannelRepository {
 
     //region Utility methods
     private fun removeOnChannelGroupClose(defaultChannelGroup: DefaultChannelGroup, name: String) {
-        defaultChannelGroup.newCloseFuture().addListener(object : ChannelGroupFutureListener {
-            override fun operationComplete(future: ChannelGroupFuture?) {
-                rooms.remove(name)
-            }
-        })
+        defaultChannelGroup.newCloseFuture().addListener { rooms.remove(name) }
     }
     //endregion
 
