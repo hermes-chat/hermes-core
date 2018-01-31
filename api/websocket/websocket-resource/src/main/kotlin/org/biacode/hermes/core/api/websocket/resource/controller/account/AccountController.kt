@@ -5,7 +5,7 @@ import org.biacode.hermes.core.service.account.AccountService
 import org.biacode.hermes.core.service.account.dto.CreateAccountDto
 import org.biacode.hermes.spring.netty.config.annotation.NettyCommand
 import org.biacode.hermes.spring.netty.config.annotation.NettyController
-import org.biacode.hermes.spring.netty.model.CommandAwareNettyControllerRequest
+import org.biacode.hermes.spring.netty.model.WebsocketCommandAwareNettyControllerRequest
 import org.springframework.beans.factory.annotation.Autowired
 
 /**
@@ -29,4 +29,4 @@ class AccountController {
 data class CreateAccountRequest(
         @JsonProperty("email")
         val email: String
-) : CommandAwareNettyControllerRequest()
+) : WebsocketCommandAwareNettyControllerRequest()

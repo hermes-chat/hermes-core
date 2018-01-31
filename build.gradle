@@ -94,7 +94,8 @@ project('api:websocket:websocket-resource') {
 
     dependencies {
         compile project(':api:websocket:websocket-facade')
-        compile("org.biacode.hermes.core:spring-netty:0.0.1-SNAPSHOT")
+        compile("org.biacode.hermes.core:spring-netty:0.2.0-SNAPSHOT")
+        compile("io.netty:netty-all:4.1.20.Final")
         compile("com.fasterxml.jackson.core:jackson-databind")
     }
 }

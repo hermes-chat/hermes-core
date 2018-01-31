@@ -15,4 +15,9 @@ class ChatRoomController {
     fun create(request: CreateRoomRequest) {
         println(request)
     }
+
+    @NettyCommand("room/send")
+    fun sendMessageToRoom(request: SendMessageToRoomRequest) {
+        println(request)
+    }
 }

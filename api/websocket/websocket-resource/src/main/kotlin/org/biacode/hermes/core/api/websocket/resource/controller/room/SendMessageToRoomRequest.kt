@@ -8,7 +8,7 @@ import org.biacode.hermes.spring.netty.model.WebsocketCommandAwareNettyControlle
  * Date: 1/28/18
  * Time: 12:12 AM
  */
-class CreateRoomRequest(
-        @JsonProperty("roomName")
-        val roomName: String
+class SendMessageToRoomRequest(
+        @JsonProperty("message")
+        val message: String
 ) : WebsocketCommandAwareNettyControllerRequest()
