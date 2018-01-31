@@ -1,7 +1,7 @@
 package org.biacode.hermes.core.api.websocket.resource.controller.room
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.biacode.hermes.spring.netty.model.WebsocketCommandAwareNettyControllerRequest
+import org.biacode.hermes.core.api.websocket.resource.controller.account.WebsocketCommandAwareNettyControllerRequest
 
 /**
  * Created by Arthur Asatryan.
