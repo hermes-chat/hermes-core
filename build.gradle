@@ -6,7 +6,7 @@ buildscript {
         platformGroup = 'org.biacode.hermes.core'
         platformVersion = '0.0.1-SNAPSHOT'
 
-        springNettyVersion = '0.5.0-SNAPSHOT'
+        springNettyVersion = '0.6.0-SNAPSHOT'
         commonsIoVersion = '2.6'
         commonsLangVersion = '3.7'
         commonsValidatorVersion = '1.6'
