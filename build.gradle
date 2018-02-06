@@ -1,12 +1,13 @@
 buildscript {
     ext {
         kotlinVersion = '1.2.21'
+        scalaLangVersion = '2.12.4'
         springBootVersion = '1.5.9.RELEASE'
         springDependencyManagementVersion = '1.0.4.RELEASE'
         platformGroup = 'org.biacode.hermes.core'
         platformVersion = '0.0.1-SNAPSHOT'
 
-        springNettyVersion = '0.6.0-SNAPSHOT'
+        springNettyVersion = '0.7.0-SNAPSHOT'
         commonsIoVersion = '2.6'
         commonsLangVersion = '3.7'
         commonsValidatorVersion = '1.6'
@@ -37,6 +38,7 @@ allprojects {
     apply plugin: 'eclipse'
     apply plugin: 'kotlin-spring'
     apply plugin: "io.spring.dependency-management"
+    apply plugin: 'scala'
 
     group = platformGroup
     version = platformVersion
@@ -62,6 +64,10 @@ allprojects {
         // Kotlin
         compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
         compile "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
+
+        // Scala
+        compile("org.scala-lang:scala-library:${scalaLangVersion}")
+        compile("org.scala-lang:scala-reflect:${scalaLangVersion}")
 
         // Apache commons
         compile("commons-io:commons-io:${commonsIoVersion}")
@@ -98,7 +104,7 @@ project('api:websocket:websocket-resource') {
 
     dependencies {
         compile project(':api:websocket:websocket-facade')
-        compile("org.biacode.hermes.spring.netty:starter:${springNettyVersion}")
+        compile("org.biacode.spring.netty:websocket-starter:${springNettyVersion}")
         compile("io.netty:netty-all:${nettyVersion}")
         compile("com.fasterxml.jackson.core:jackson-databind")
     }

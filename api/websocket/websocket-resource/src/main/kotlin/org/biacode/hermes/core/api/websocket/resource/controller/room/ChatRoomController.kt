@@ -1,22 +1,22 @@
 package org.biacode.hermes.core.api.websocket.resource.controller.room
 
-import org.biacode.hermes.spring.netty.core.annotation.HermesCommand
-import org.biacode.hermes.spring.netty.core.annotation.HermesController
+import org.biacode.spring.netty.core.annotation.NettyCommand
+import org.biacode.spring.netty.core.annotation.NettyController
 
 /**
  * Created by Arthur Asatryan.
  * Date: 1/28/18
  * Time: 12:08 AM
  */
-@HermesController
+@NettyController
 class ChatRoomController {
 
-    @HermesCommand("room/create")
+    @NettyCommand("room/create")
     fun create(request: CreateRoomRequest) {
         println(request)
     }
 
-    @HermesCommand("room/send")
+    @NettyCommand("room/send")
     fun sendMessageToRoom(request: SendMessageToRoomRequest) {
         println(request)
     }
